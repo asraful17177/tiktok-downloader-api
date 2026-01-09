@@ -1,0 +1,32 @@
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+
+const app = express();
+app.use(cors());
+
+app.get("/api/tiktok", async (req, res) => {
+  const url = req.query.url;
+  if (!url) return res.json({ error: true });
+
+  try {
+    const r = await axios.get(
+      "https://tikwm.com/api/?url=" + encodeURIComponent(url) + "&hd=1"
+    );
+
+    const d = r.data.data;
+
+    res.json({
+      video: d.play,   // HD No Watermark
+      audio: d.music
+    });
+
+  } catch (e) {
+    res.json({ error: true });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () =>
+  console.log("Server running on port " + PORT)
+);
